@@ -1,0 +1,43 @@
+In:
+a, b, a->prev, b->next
+Sort:
+if(isExist(a->prev) && isExist(b->next) && isExist(b->prev) && isExist(a->next))
+1)  a->prev->next = b;
+    b->next->prev = a;
+
+2)  b->prev = a->prev
+    a->next = b->next
+
+3)  b->next = a;
+    a->prev = b;
+
+if(isExist(a->prev) && notExist(b->next))
+1)  a->prev->next = b;
+    tail = a;
+
+2)  b->prev = a->prev;
+    a->next = nullptr
+
+3)  b->next = a;
+    a->prev = b;
+
+if(isExist(b->next) && notExist(a->prev))
+1)  head = b;
+    b->next->prev = a;
+
+2)  b->prev = nullptr;
+    a->next = b->next;
+
+3)  b->next = a;
+    a->prev = b;
+
+
+if(notExist(b->next) && notExist(a->prev))
+1)  head = b;
+    tail = a;
+
+2)  b->prev = nullptr;
+    a->next = nullptr;
+
+3)  b->next = a;
+    a->prev = b;
