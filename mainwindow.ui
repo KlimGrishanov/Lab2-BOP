@@ -161,6 +161,9 @@ color: black;</string>
     </property>
    </widget>
    <widget class="QPushButton" name="next_page_btn">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>330</x>
@@ -174,6 +177,9 @@ color: black;</string>
     </property>
    </widget>
    <widget class="QPushButton" name="prev_page_btn">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>330</x>
@@ -196,7 +202,7 @@ color: black;</string>
      </rect>
     </property>
     <property name="text">
-     <string>You see:</string>
+     <string>Page:</string>
     </property>
    </widget>
    <widget class="QLabel" name="lbl_pages">
@@ -209,7 +215,7 @@ color: black;</string>
      </rect>
     </property>
     <property name="text">
-     <string>Nothing</string>
+     <string>1</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_5">

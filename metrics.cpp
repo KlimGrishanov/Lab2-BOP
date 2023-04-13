@@ -1,5 +1,6 @@
 #include "metrics.h"
 
+// Calculating Metrics
 metrics calc_metrics(metrics_data* data) {
     sort_metrics_array(data);
     metrics data_metrics;
@@ -32,6 +33,8 @@ metrics calc_metrics(metrics_data* data) {
     return data_metrics;
 }
 
+
+// Sort Metrics Array
 metrics_data *sort_metrics_array(metrics_data* metrics_arr) {
     metrics_node *node = metrics_arr->head_node;
     for(int i = 0; i < metrics_arr->quantity_records-1; i++) {

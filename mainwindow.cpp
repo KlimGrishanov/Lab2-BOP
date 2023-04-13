@@ -25,137 +25,83 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+// Getter
+int MainWindow::get_current_page() {
+    return cur_page;
+}
+
+int MainWindow::get_region_col() {
+    return region_col;
+}
+
+
+//Setter
+void MainWindow::set_current_page(int new_page) {
+    cur_page = new_page;
+}
+
+void MainWindow::set_region_col(int new_region_col) {
+    region_col = new_region_col;
+}
+
 void MainWindow::getpath() {
     QString path = QFileDialog::getOpenFileName();
     ui->path_lbl->setText(path);
 }
 
-void MainWindow::next_page(){
+// Headers
+void MainWindow::init_header() {
     QString path = ui->path_lbl->text();
-    QString region = ui->region_line_edit->text();
-    std::string header = read_record(0, path.toStdString());
-    csv_data* arr_of_word = split_record_to_word(header);
-    QStringList QColumns = convert_row_to_qt_format(arr_of_word);
-    free_csv_data(*arr_of_word);
-    ui->table->setHorizontalHeaderLabels(QColumns);
-    ui->table->setRowCount(0);
-    cur_page += 1;
-    ui->lbl_pages->setText(QString::number(cur_page-1));
-    int i = 0;
-    int index = (cur_page-1)*ONE_PAGE-ONE_PAGE+1;
-    while(i < 100){
-        std::string line = read_record(index, path.toStdString());
-        if(line == ERR_END_OF_FILE || line == ERR_FILE_NOT_EXIST){
-            break;
-        }
-        csv_data* arr_of_word = split_record_to_word(line);
-        print_arr_of_word(*arr_of_word);
-        std::cout << region.toStdString() << std::endl;
-        if(is_required_region(arr_of_word, region.toStdString(), region_col) || region == ""){
-            QStringList row = convert_row_to_qt_format(arr_of_word);
-            free_csv_data(*arr_of_word);
-            ui->table->setRowCount(i+1);
-            for(size_t k = 0; k < (size_t)ui->table->columnCount(); k++){
-                QTableWidgetItem *item = new QTableWidgetItem();
-                item->setData(Qt::EditRole, row.at(k).toDouble());
-                item->setText(row.at(k));
-                ui->table->setItem(i, k, item);
-            }
-            i++;
-        }
-        index++;
-    }
-}
 
-void MainWindow::prev_page(){
-    QString path = ui->path_lbl->text();
-    QString region = ui->region_line_edit->text();
-    std::string header = read_record(0, path.toStdString());
-    csv_data* arr_of_word = split_record_to_word(header);
-    QStringList QColumns = convert_row_to_qt_format(arr_of_word);
-    free_csv_data(*arr_of_word);
-    ui->table->setHorizontalHeaderLabels(QColumns);
-    ui->table->setRowCount(0);
-    cur_page -= 1;
-    ui->lbl_pages->setText(QString::number(cur_page-1));
-    int i = 0;
-    int index = (cur_page-1)*ONE_PAGE-ONE_PAGE+1;
-    while(i < 100){
-        std::string line = read_record(index, path.toStdString());
-        if(line == ERR_END_OF_FILE || line == ERR_FILE_NOT_EXIST){
-            break;
-        }
-        csv_data* arr_of_word = split_record_to_word(line);
-        print_arr_of_word(*arr_of_word);
-        std::cout << region.toStdString() << std::endl;
-        if(is_required_region(arr_of_word, region.toStdString(), region_col) || region == ""){
-            QStringList row = convert_row_to_qt_format(arr_of_word);
-            free_csv_data(*arr_of_word);
-            ui->table->setRowCount(i+1);
-            for(size_t k = 0; k < (size_t)ui->table->columnCount(); k++){
-                QTableWidgetItem *item = new QTableWidgetItem();
-                item->setData(Qt::EditRole, row.at(k).toDouble());
-                item->setText(row.at(k));
-                ui->table->setItem(i, k, item);
-            }
-            i++;
-        }
-        index++;
-    }
-}
-
-void MainWindow::load_data() {
-    QString path = ui->path_lbl->text();
-    QString region = ui->region_line_edit->text();
     std::string header = read_record(0, path.toStdString());
     csv_data* arr_of_word = split_record_to_word(header);
     ui->table->setColumnCount(arr_of_word->node_quantity);
-    region_col = find_region_col(arr_of_word);
-    std::cout << region_col << '\n';
+    set_region_col(find_region_col(arr_of_word));
     QStringList QColumns = convert_row_to_qt_format(arr_of_word);
     ui->table->setHorizontalHeaderLabels(QColumns);
     free_csv_data(*arr_of_word);
+}
+
+void MainWindow::set_header() {
+    QString path = ui->path_lbl->text();
+
+    std::string header = read_record(0, path.toStdString());
+    csv_data* arr_of_word = split_record_to_word(header);
+    QStringList QColumns = convert_row_to_qt_format(arr_of_word);
+    free_csv_data(*arr_of_word);
+    ui->table->setHorizontalHeaderLabels(QColumns);
+}
+
+
+// DataLoader
+void MainWindow::load_rows(int i, int index) {
+    QString path = ui->path_lbl->text();
+    QString region = ui->region_line_edit->text();
+
     ui->table->setRowCount(0);
-    cur_page = 1;
-    ui->lbl_pages->setText(QString::number(cur_page));
-    cur_page++;
-    int i = 0;
-    int index = 1;
     while(i < 100){
         std::string line = read_record(index, path.toStdString());
         if(line == ERR_END_OF_FILE || line == ERR_FILE_NOT_EXIST){
             break;
         }
-        if(line != ""){
-            csv_data* arr_of_word = split_record_to_word(line);
-            std::cout << region.toStdString() << std::endl;
-            if(is_required_region(arr_of_word, region.toStdString(), region_col) || region == ""){
-                QStringList row = convert_row_to_qt_format(arr_of_word);
-                free_csv_data(*arr_of_word);
-                ui->table->setRowCount(i+1);
-                for(size_t k = 0; k < (size_t)ui->table->columnCount(); k++){
-                    QTableWidgetItem *item = new QTableWidgetItem();
-                    item->setData(Qt::EditRole, row.at(k).toDouble());
-                    item->setText(row.at(k));
-                    ui->table->setItem(i, k, item);
-                }
-                i++;
+        csv_data* arr_of_word = split_record_to_word(line);
+        if(arr_of_word->node_quantity != 0 && (is_required_region(arr_of_word, region.toStdString(), get_region_col()) || region == "")){
+            QStringList row = convert_row_to_qt_format(arr_of_word);
+            free_csv_data(*arr_of_word);
+            ui->table->setRowCount(i+1);
+            for(size_t k = 0; k < (size_t)ui->table->columnCount(); k++){
+                QTableWidgetItem *item = new QTableWidgetItem();
+                item->setData(Qt::EditRole, row.at(k).toDouble());
+                item->setText(row.at(k));
+                ui->table->setItem(i, k, item);
             }
+            i++;
         }
         index++;
     }
 }
 
-void MainWindow::calculate_data() {
-    int col = ui->metrics_line_edit->text().toInt();
-    metrics_data* data = get_data_from_table(col);
-    metrics metrics_value = calc_metrics(data);
-
-    ui->high_lbl->setText(QString::number(metrics_value.high));
-    ui->low_lbl->setText(QString::number(metrics_value.low));
-    ui->medium_lbl->setText(QString::number(metrics_value.medium));
-}
-
+// QT Utilitiy
 metrics_data *MainWindow::get_data_from_table(size_t col) {
     metrics_data* metrics = (metrics_data*)malloc(sizeof(metrics_data));
     metrics->quantity_records = 1;
@@ -190,4 +136,58 @@ QStringList MainWindow::convert_row_to_qt_format(csv_data *arr_of_word)  {
         }
     }
     return temp;
+}
+
+// SLOTS
+void MainWindow::next_page(){
+    set_header();
+
+    set_current_page(get_current_page() + 1);
+    ui->lbl_pages->setText(QString::number(get_current_page()-1));
+    if(get_current_page() > 1) {
+        ui->prev_page_btn->setEnabled(1);
+    }
+
+    int i = 0;
+    int index = (get_current_page()-1)*ONE_PAGE-ONE_PAGE+1;
+    load_rows(i, index);
+}
+
+void MainWindow::prev_page(){
+    set_header();
+
+    set_current_page(get_current_page() - 1);
+    ui->lbl_pages->setText(QString::number(get_current_page()-1));
+    if(get_current_page() == 2) {
+        ui->prev_page_btn->setDisabled(1);
+    }
+
+    int i = 0;
+    int index = (get_current_page()-1)*ONE_PAGE-ONE_PAGE+1;
+    load_rows(i, index);
+}
+
+void MainWindow::load_data() {
+    init_header();
+
+    ui->table->setRowCount(0);
+
+    set_current_page(1);
+    ui->lbl_pages->setText(QString::number(get_current_page()));
+    ui->next_page_btn->setEnabled(1);
+    set_current_page(get_current_page() + 1);
+
+    int i = 0;
+    int index = 1;
+    load_rows(i, index);
+}
+
+void MainWindow::calculate_data() {
+    int col = ui->metrics_line_edit->text().toInt();
+    metrics_data* data = get_data_from_table(col);
+    metrics metrics_value = calc_metrics(data);
+
+    ui->high_lbl->setText(QString::number(metrics_value.high));
+    ui->low_lbl->setText(QString::number(metrics_value.low));
+    ui->medium_lbl->setText(QString::number(metrics_value.medium));
 }

@@ -23,7 +23,6 @@ struct csv_data {
 std::ifstream openfile(std::string filename);
 std::string read_record(int num_of_line, std::string filename);
 csv_data* split_record_to_word(std::string temp);
-void print_arr_of_word(csv_data data);
 void free_csv_data(csv_data data);
 bool is_required_region(csv_data* data, std::string region, int region_col);
 int find_region_col(csv_data *header);
