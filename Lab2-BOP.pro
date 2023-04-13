@@ -11,11 +11,15 @@ CONFIG += c++11
 SOURCES += \
     csvlib.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    metrics.cpp \
+    utility.cpp
 
 HEADERS += \
     csvlib.h \
-    mainwindow.h
+    mainwindow.h \
+    metrics.h \
+    utility.h
 
 FORMS += \
     mainwindow.ui

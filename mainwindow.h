@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "csvlib.h"
+#include "metrics.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -16,16 +17,12 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     int cur_page;
+    int region_col = -1;
 
 private:
     Ui::MainWindow *ui;
     QStringList convert_row_to_qt_format(csv_data *arr_of_word);
     metrics_data *get_data_from_table(size_t col);
-    void print_data_from_table(metrics_data* metrics_arr);
-    void copy_node(metrics_node* a, metrics_node* b);
-    void swap_metric_elem(metrics_node *a, metrics_node *b);
-    metrics_data *sort_metrics_array(metrics_data* metrics_arr);
-    metrics calc_metrics(int col);
 
 private slots:
     void next_page();

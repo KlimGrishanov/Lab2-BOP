@@ -5,17 +5,30 @@ std::ifstream openfile(std::string filename) {
     return inFile;
 }
 
-bool is_required_region(csv_data* data, std::string region){
+bool is_required_region(csv_data* data, std::string region, int region_col){
     bool ans = false;
     csv_node *first_node = data->head_csv_node;
-    for(int i = 0; i < data->node_quantity; i++){
-        if(first_node->word == region) {
+    for(int i = 0; i <= region_col; i++){
+        if(first_node->word == region && i == region_col) {
             ans = true;
             break;
         }
         first_node = first_node->next_csv_node;
     }
     return ans;
+}
+
+int find_region_col(csv_data *header) {
+    int col = -1;
+    csv_node *node = header->head_csv_node;
+    for(int i = 0; i < header->node_quantity; i++) {
+        if(node->word == "region") {
+            col = i;
+            break;
+        }
+        node = node->next_csv_node;
+    }
+    return col;
 }
 
 std::string read_record(int num_of_line, std::string filename) {
@@ -49,12 +62,16 @@ csv_data* split_record_to_word(std::string temp) {
                 node->word = "";
                 if(i != temp.length()-1){
                     for(size_t k = last_delim; k < i; k++) {
-                        first_node->word += temp[k];
+                        if(temp[k] != '\r' && temp[k] != '\n'){
+                            first_node->word += temp[k];
+                        }
                     }
                 } else {
                     int diff = i - last_delim;
                     for(size_t k = last_delim; k <= i && diff != 0; k++) {
-                        first_node->word += temp[k];
+                        if(temp[k] != '\r' && temp[k] != '\n'){
+                            first_node->word += temp[k];
+                        }
                     }
                 }
                 first_node->next_csv_node = node;
@@ -71,8 +88,6 @@ csv_data* split_record_to_word(std::string temp) {
             }
         }
     }
-    std::cout << "Node Q: " << data->node_quantity << '\n';
-    std::cout << "Region: " << data->head_csv_node->next_csv_node->word << '\n';
     return data;
 }
 
